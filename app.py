@@ -37,6 +37,7 @@ def consume():
             # Receives a URL parameter representing the image to download from S3
             img_name = message[0]
             chat_id = message[1]
+            gif_message_id = message[2]
             local_path = img_name.split("/")[-1]
             original_img_path = download_image_from_s3(images_bucket,img_name,local_path)
 
@@ -81,6 +82,7 @@ def consume():
                     'original_img_path': original_img_path,
                     'predicted_img_path': str(predicted_img_path),
                     'chat_id': chat_id,
+                    'gif_message_id': gif_message_id,
                     'labels': labels_done,
                     'time': Decimal(time.time())
                 }

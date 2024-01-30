@@ -24,7 +24,7 @@ pipeline {
             steps {
                 script {
                     echo "IMAGE_TAG: ${IMAGE_TAG}"
-                    dockerImage = docker.build("${ECR_REGISTRY}/yolo5-team3-ecr:${IMAGE_TAG}") // , "--no-cache .")
+                    dockerImage = docker.build("${ECR_REGISTRY}/yolo5-team3-ecr:${IMAGE_TAG}")
                     dockerImage.push()
                 }
             }
@@ -36,7 +36,7 @@ pipeline {
                         sh 'aws eks update-kubeconfig --region ${CLUSTER_REGION} --name ${CLUSTER_NAME}'
                         withCredentials([file(credentialsId: 'KUBE_CONFIG_CRED', variable: 'KUBECONFIG')]) {
                             sh "sed -i 's|image: .*|image: ${ECR_REGISTRY}/yolo5-team3-ecr:${IMAGE_TAG}|' yolo5-deployment.yaml"
-                            sh 'kubectl apply -f yolo5-deployment.yaml' //--validate=false'
+                            sh 'kubectl apply -f yolo5-deployment.yaml'
                         }
                     }
                 }
