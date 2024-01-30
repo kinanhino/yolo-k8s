@@ -18,6 +18,10 @@ spec:
           image: kinanhino/yolobot:1.0.4-amd64
           ports:
             - containerPort: 8081
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "2000m"
           env:
             - name: BUCKET_NAME
               value: kin-docker-bucket
