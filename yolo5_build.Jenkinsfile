@@ -9,6 +9,8 @@ pipeline {
         KUBE_CONFIG_CRED = 'KUBE_CONFIG_CRED'
         CLUSTER_NAME = "k8s-main"
         CLUSTER_REGION = "us-east-1"
+        GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
+
     }
     stages {
         stage('Login to AWS ECR') {
@@ -29,14 +31,33 @@ pipeline {
                 }
             }
         }
-        stage('Deploy') {
+        stage('Update Deployment and Push to GitHub') {
             steps {
                 script {
-                    withCredentials([aws(credentialsId: AWS_CREDENTIALS_ID, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
-                        sh 'aws eks update-kubeconfig --region ${CLUSTER_REGION} --name ${CLUSTER_NAME}'
-                        withCredentials([file(credentialsId: 'KUBE_CONFIG_CRED', variable: 'KUBECONFIG')]) {
-                            sh "sed -i 's|image: .*|image: ${ECR_REGISTRY}/yolo5-team3-ecr:${IMAGE_TAG}|' yolo5-deployment.yaml"
-                            sh 'kubectl apply -f yolo5-deployment.yaml'
+                    withCredentials([usernamePassword(credentialsId: 'GIT_CREDENTIALS_ID', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        def repoDir = 'yolo-k8s'
+                        if (!fileExists("${repoDir}/.git")) {
+                            sh "git clone https://github.com/kinanhino/yolo-k8s.git ${repoDir}"
+                        }
+
+                        dir(repoDir) {
+                            sh 'git checkout argo-releases'
+                            sh 'git fetch --all'
+                            sh 'git reset --hard origin/argo-releases'
+                            try {
+                                sh 'git merge origin/main'
+                            } catch (Exception e) {
+                                echo "Merge encountered issues: ${e.getMessage()}"
+                                sh 'git merge --abort'
+                                error "Merging from main to argo-releases failed. Please resolve conflicts manually."
+                            }
+                            sh "sed -i 's|image: .*|image: ${ECR_REGISTRY}/yolo-team3-ecr:${IMAGE_TAG}|' yolo5-deployment.yaml"
+                            sh 'git config user.email "kinanhino24@gmail.com"'
+                            sh 'git config user.name "kinanhino"'
+                            
+                            sh 'git add polybot-deployment.yaml'
+                            sh 'git commit -m "Update image tag to ${IMAGE_TAG}"'
+                            sh 'git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/kinanhino/yolo-k8s.git argo-releases'
                         }
                     }
                 }
