@@ -55,7 +55,7 @@ pipeline {
                             sh 'git config user.email "kinanhino24@gmail.com"'
                             sh 'git config user.name "kinanhino"'
                             
-                            sh 'git add polybot-deployment.yaml'
+                            sh 'git add yolo5-deployment.yaml'
                             sh 'git commit -m "Update image tag to ${IMAGE_TAG}"'
                             sh 'git push https://$GIT_USERNAME:$GIT_PASSWORD@github.com/kinanhino/yolo-k8s.git argo-releases'
                         }
@@ -64,7 +64,7 @@ pipeline {
             }
         }
     }
-    
+
     post {
         always {
             sh 'docker rmi $(docker images -q) -f || true'
