@@ -64,6 +64,7 @@ pipeline {
             }
         }
     }
+    
     post {
         always {
             sh 'docker rmi $(docker images -q) -f || true'
