@@ -15,24 +15,16 @@ spec:
     spec:
       containers:
         - name: yolo5-container
-          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:8_20240203_134922
+          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:16_20240204_220239
           ports:
             - containerPort: 8081
           resources:
             requests:
               memory: "100Mi"
               cpu: "100m"
-          env:
-            - name: BUCKET_NAME
-              value: kin-docker-bucket
-            - name: REGION
-              value: us-east-1
-            - name: SQS_QUEUE_NAME
-              value: team3nsQueue
-            - name: DYNAMO_TBL
-              value: aws-dynamo-kinan
-            - name: POLYBOT_URL
-              value: 'http://team3polybot-service:8443'
+          envFrom:
+          - secretRef:
+              name: team3-yolo-secrets
 ---
 apiVersion: v1
 kind: Service
