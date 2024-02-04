@@ -98,6 +98,7 @@ def consume():
 
 def send_request_to_polybot(prediction_id):
     try:
+        logger.info("sending request to poly")
         poly_service_url = os.getenv('POLYBOT_URL')
         res = requests.get(f'{poly_service_url}/results?predictionId={prediction_id}')
         logger.info(f'Status Code: {res.status_code}')
