@@ -69,10 +69,6 @@ def consume():
                     labels = [line.split(' ') for line in labels]
                     labels_done = [{
                         'class': names[int(l[0])],
-                        'cx': Decimal(str(l[1])),
-                        'cy': Decimal(str(l[2])),
-                        'width': Decimal(str(l[3])),
-                        'height': Decimal(str(l[4])),
                     } for l in labels]
 
                 # logger.info(f'prediction: {prediction_id}/{original_img_path}. prediction summary:\n\n{labels_done}')
