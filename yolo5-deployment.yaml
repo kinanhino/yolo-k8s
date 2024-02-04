@@ -4,7 +4,7 @@ metadata:
   name: yolo5-team3-deployment
   namespace: team3ns
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: yolo5-team3
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: yolo5-container
-          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:11_20240204_183921
+          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:8_20240203_134922
           ports:
             - containerPort: 8081
           resources:
@@ -58,6 +58,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: yolo5-team3-deployment
-  minReplicas: 0
+  minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 50
