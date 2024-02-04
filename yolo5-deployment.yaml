@@ -4,7 +4,7 @@ metadata:
   name: yolo5-team3-deployment
   namespace: team3ns
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: yolo5-team3
@@ -15,13 +15,13 @@ spec:
     spec:
       containers:
         - name: yolo5-container
-          image: kinanhino/yolobot:1.0.4-amd64
+          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:11_20240204_183921
           ports:
             - containerPort: 8081
           resources:
             requests:
-              memory: "50Mi"
-              cpu: "50m"
+              memory: "100Mi"
+              cpu: "100m"
           env:
             - name: BUCKET_NAME
               value: kin-docker-bucket
@@ -58,6 +58,6 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: yolo5-team3-deployment
-  minReplicas: 1
-  maxReplicas: 10
+  minReplicas: 0
+  maxReplicas: 2
   targetCPUUtilizationPercentage: 50
