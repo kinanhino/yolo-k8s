@@ -110,6 +110,7 @@ def send_request_to_polybot(prediction_id):
         logger.error(f"An error occurred: {e}")
 
 def upload_file_to_s3(file_name, bucket, object_name=None):
+    logger.info("uploading to s3..")
     if object_name is None:
         object_name = file_name
     s3_client = session.client('s3')
@@ -121,6 +122,7 @@ def upload_file_to_s3(file_name, bucket, object_name=None):
     return True
 
 def download_image_from_s3(bucket, s3_img_path, local_img_path=None):
+    logger.info("downloading image from s3..")
     if local_img_path is None:
         local_img_path = s3_img_path
     s3_client = session.client('s3')
@@ -133,6 +135,7 @@ def download_image_from_s3(bucket, s3_img_path, local_img_path=None):
     return local_img_path
 
 def store_dynamo(summary_dictionary):
+    logger.info("storing in dynamo..")
     dynamodb = session.resource('dynamodb')
     dynamo_tbl = dynamodb.Table(os.getenv('DYNAMO_TBL'))
     try:
