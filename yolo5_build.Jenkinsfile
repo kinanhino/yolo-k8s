@@ -50,6 +50,7 @@ pipeline {
                                 sh 'git merge --abort'
                                 error "Merging from main to argo-releases failed. Please resolve conflicts manually."
                             }
+                            
                             sh "sed -i 's|image: .*|image: ${ECR_REGISTRY}/yolo5-team3-ecr:${IMAGE_TAG}|' yolo5-deployment.yaml"
                             sh 'git config user.email "kinanhino24@gmail.com"'
                             sh 'git config user.name "kinanhino"'
