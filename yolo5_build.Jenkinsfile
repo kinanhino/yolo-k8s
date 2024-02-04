@@ -10,7 +10,6 @@ pipeline {
         CLUSTER_NAME = "k8s-main"
         CLUSTER_REGION = "us-east-1"
         GIT_CREDENTIALS_ID = "GIT_CREDENTIALS_ID"
-
     }
     stages {
         stage('Login to AWS ECR') {
@@ -31,7 +30,6 @@ pipeline {
                 }
             }
         }
-        
         stage('Update Deployment and Push to GitHub') {
             steps {
                 script {
