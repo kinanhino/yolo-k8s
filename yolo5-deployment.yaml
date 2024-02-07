@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: yolo5-container
-          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:19_20240204_230954
+          image: 933060838752.dkr.ecr.eu-central-1.amazonaws.com/yolo5-team3-ecr:20_20240207_075418
           ports:
             - containerPort: 8081
           resources:
