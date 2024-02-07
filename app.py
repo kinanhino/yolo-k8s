@@ -60,7 +60,8 @@ def consume():
             predicted_img_path = Path(f'static/data/{prediction_id}/{original_img_path}')
 
             prediction_s3_path = f'predicted/{original_img_path}'
-            upload_file_to_s3(predicted_img_path, images_bucket, prediction_s3_path)
+            check_upload = upload_file_to_s3(predicted_img_path, images_bucket, prediction_s3_path)
+            logger.info(f"Successfully uploaded? {check_upload}")
             # Parse prediction labels and create a summary
             pred_summary_path = Path(f'static/data/{prediction_id}/labels/{original_img_path.split(".")[0]}.txt')
             if pred_summary_path.exists():
@@ -106,11 +107,11 @@ def send_request_to_polybot(prediction_id):
         logger.error(f"An error occurred: {e}")
 
 def upload_file_to_s3(file_name, bucket, object_name=None):
-    logger.info("uploading to s3..")
     if object_name is None:
         object_name = file_name
     s3_client = session.client('s3')
     try:
+        logger.info("uploading to s3..")
         s3_client.upload_file(file_name, bucket, object_name)
     except Exception as e:
         logger.error(e)
