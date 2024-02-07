@@ -112,7 +112,7 @@ def upload_file_to_s3(file_name, bucket, object_name=None):
     s3_client = session.client('s3')
     try:
         s3_client.upload_file(file_name, bucket, object_name)
-    except ClientError as e:
+    except Exception as e:
         logger.error(e)
         return False
     return True
