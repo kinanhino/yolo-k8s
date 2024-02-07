@@ -83,15 +83,46 @@ def consume():
                     'labels': labels_done,
                     'time': Decimal(time.time())
                 }
+                logger.info("\n{prediction_summary}\n")
                 # store the prediction_summary in a DynamoDB table
-                dynamo_res = store_dynamo(prediction_summary)
-	        # perform a GET request to Polybot to `/results` endpoint
-                if dynamo_res:
-                    send_request_to_polybot(prediction_id)
-                else:
-                    logger.error("Cannot send message to Dynamo, therefore Cannot send request back to the polybot!")
+                dynamo_and_send_accordingly(prediction_summary,prediction_id,True)
+
+            else:
+                prediction_summary = {
+                    'prediction_id': prediction_id,
+                    'original_img_path': original_img_path,
+                    'chat_id': chat_id,
+                    'gif_message_id': gif_message_id,
+                    'time': Decimal(time.time())
+                }
+                dynamo_and_send_accordingly(prediction_summary,prediction_id,False)
+                
             # Delete the message from the queue as the job is considered as DONE
             sqs_client.delete_message(QueueUrl=queue_name, ReceiptHandle=receipt_handle)
+
+def dynamo_and_send_accordingly(summary_dictionary,prediction_id,is_full):
+    dynamo_res = store_dynamo(summary_dictionary)
+    if dynamo_res:
+        if is_full:
+            send_request_to_polybot(prediction_id)
+        else:
+            send_empty_request_to_poly(prediction_id)
+    else:
+        logger.error("Cannot send message to Dynamo, therefore Cannot send request back to the polybot!")
+
+def send_empty_request_to_poly(prediction_id):
+    try:
+        logger.info("sending empty request to poly")
+        poly_service_url = os.getenv('POLYBOT_URL')
+        res = requests.get(f'{poly_service_url}/noresults?predictionId={prediction_id}')
+        logger.info(f'Status Code: {res.status_code}')
+        res.raise_for_status()
+        return 'OK'
+    except requests.exceptions.HTTPError as http_err:
+        logger.error(f"HTTP error occurred: {http_err}")
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+
 
 def send_request_to_polybot(prediction_id):
     try:
